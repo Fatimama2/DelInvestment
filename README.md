@@ -1,133 +1,191 @@
-# DEL Invest — PSX Trading Prototype + AI Assistant
+<p align="center">
+  <img src="logo.svg" width="200px" align="center" alt="Zod logo" />
+  <h1 align="center">Zod</h1>
+  <p align="center">
+    TypeScript-first schema validation with static type inference
+    <br/>
+    by <a href="https://x.com/colinhacks">@colinhacks</a>
+  </p>
+</p>
+<br/>
 
-A runnable **prototype** of a mobile-first stock & ETF trading app for the **Pakistan Stock
-Exchange (PSX)** retail investor, plus an in-app **AI assistant**. The UX is benchmarked
-against Robinhood / Webull (simple, clean, fast) but the data and flows are modelled on
-Pakistan's market infrastructure: **CDC** custody, **NCCPL** clearing/KYC, **UIN**,
-**T+1** settlement, **Raast** funding, and **Shariah-compliant** investing.
+<p align="center">
+<a href="https://github.com/colinhacks/zod/actions?query=branch%3Amain"><img src="https://github.com/colinhacks/zod/actions/workflows/test.yml/badge.svg?event=push&branch=main" alt="Zod CI status" /></a>
+<a href="https://opensource.org/licenses/MIT" rel="nofollow"><img src="https://img.shields.io/github/license/colinhacks/zod" alt="License"></a>
+<a href="https://www.npmjs.com/package/zod" rel="nofollow"><img src="https://img.shields.io/npm/dw/zod.svg" alt="npm"></a>
+<a href="https://discord.gg/KaSRdyX2vc" rel="nofollow"><img src="https://img.shields.io/discord/893487829802418277?label=Discord&logo=discord&logoColor=white" alt="discord server"></a>
+<a href="https://github.com/colinhacks/zod" rel="nofollow"><img src="https://img.shields.io/github/stars/colinhacks/zod" alt="stars"></a>
+</p>
 
-> ⚠️ **This is a prototype to validate UX, flows and the assistant — not a production
-> trading system.** Every connection to an exchange, broker, depository, bank or clearing
-> house is **MOCKED** behind a clean interface. No real orders are placed and no real money
-> moves. Fees/taxes are illustrative and config-driven — verify before any production use.
+<div align="center">
+  <a href="https://zod.dev/api">Docs</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://discord.gg/RcG33DQJdf">Discord</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://twitter.com/colinhacks">𝕏</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://bsky.app/profile/zod.dev">Bluesky</a>
+  <br />
+</div>
 
-Brand: **green / black / white**, with a **night mode** toggle, **3D** navigation, and the
-**DEL** logo recreated as crisp scalable SVG.
+<br/>
+<br/>
 
----
+### [Read the docs →](https://zod.dev/api)
 
-## Quick start
+<br/>
+<br/>
 
-**Prerequisites:** Node.js 20+ (tested on Node 24) and npm 10+.
+## What is Zod?
 
-```bash
-# 1. install everything (npm workspaces)
-npm install
+Zod is a TypeScript-first validation library. Define a schema and parse some data with it. You'll get back a strongly typed, validated result.
 
-# 2. (optional) enable the live AI assistant
-cp .env.example .env        # then put your key in ANTHROPIC_API_KEY
-#    Windows PowerShell:  Copy-Item .env.example .env
+```ts
+import * as z from "zod";
 
-# 3. run the backend (:4000) and the web app (:5173) together
-npm run dev
+const User = z.object({
+  name: z.string(),
+});
+
+// some untrusted data...
+const input = {
+  /* stuff */
+};
+
+// the parsed result is validated and type safe!
+const data = User.parse(input);
+
+// so you can use it with confidence :)
+console.log(data.name);
 ```
 
-Then open **http://localhost:5173**.
+<br/>
 
-- The app runs **with no key**: all market data, portfolio, trading, watchlists and
-  flashcards work from seeded mock data, and the assistant uses a built-in **offline**
-  mode (it can still pull your live mock portfolio, refuse advice, and launch flashcards).
-- Add an `ANTHROPIC_API_KEY` to `.env` to switch the assistant to the **live** Claude
-  experience (tool-calling + RAG). The header shows **Live API** / **Offline**.
+## Features
 
-> The web app talks to the backend by default and **falls back to running fully in the
-> browser** (same mock logic) if the backend isn't reachable — so it's always explorable.
+- Zero external dependencies
+- Works in Node.js and all modern browsers
+- Tiny: `2kb` core bundle (gzipped)
+- Immutable API: methods return a new instance
+- Concise interface
+- Works with TypeScript and plain JS
+- Built-in JSON Schema conversion
+- Extensive ecosystem
 
-### Scripts
+<br/>
 
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | Backend + web together (recommended) |
-| `npm run dev:backend` | Backend API only (http://localhost:4000) |
-| `npm run dev:web` | Web app only (http://localhost:5173) |
-| `npm run build` | Production build of the web app |
-| `npm run typecheck` | Type-check web + backend |
+## Installation
 
----
-
-## What's included (maps to the brief)
-
-**10 MVP screens**
-
-1. **Onboarding & KYC** — live status tracker (OTP → CNIC → UIN → CDC account → ready to fund), with a replayable walkthrough.
-2. **Home / portfolio dashboard** — value, P&L, sector allocation donut, T+1 balances, indices, top movers.
-3. **Discover** — search + screeners (**Shariah-compliant** toggle, KMI-30, sector, sort) over ~30 instruments.
-4. **Stock/ETF detail** — line **and candlestick** charts, fundamentals, profile, news, buy/sell.
-5. **Order ticket** — market/limit/stop, qty, validity, an **itemised fee + tax breakdown** and a confirmation sheet; T+1 settlement date.
-6. **Funding** — deposit/withdraw via mock **Raast / IBFT**, ledger, available vs settling balance.
-7. **Watchlists** — multiple lists, sparklines, add/remove.
-8. **Education hub + flashcards** — 10 spaced-repetition decks with a 3D flip.
-9. **AI assistant** — persistent tab, screen-context aware (see below).
-10. **Account & settings** — **night mode**, language (en/ur), filer status, Shariah preference, account tier, PIN/biometric & 2FA stubs, UIN.
-
-**AI assistant**
-
-- Splits **knowledge** (RAG: app help/FAQ, glossary, education, news, announcements,
-  company profiles) from **live data** (tool calls: portfolio, balances, quotes,
-  watchlist, orders, account context).
-- **News agent**, **portfolio explainer**, **education + flashcard launching**, **app help
-  with deep links**, and **timestamped, grounded** portfolio/watchlist Q&A.
-- **Guardrails enforced in code:** refuses personalized buy/sell/hold advice, injects a
-  "not financial advice" disclosure, never invents prices/balances (they come from tools),
-  cannot place orders or move money (only deep-links you to confirm), treats retrieved
-  documents as **untrusted data** (prompt-injection safe — see the `NEWS-INJ-01` probe),
-  and logs every tool call.
-
-**Architecture & safety**
-
-- Every external system is an **interface + MOCK adapter** in `packages/integrations`
-  (MarketData, BrokerOms, CDC, NCCPL, Payment, Identity) — swap a real provider without
-  touching app logic.
-- **No secrets in code.** The Anthropic key lives only in `.env` (git-ignored).
-- **Fees/taxes are config-driven** in `packages/shared/src/config.ts`, flagged
-  "verify against latest Finance Act / NCCPL schedule before production." Filer vs
-  non-filer changes the capital-gains tax used in estimates.
-- **T+1 settlement** modelled: sale proceeds are "settling" until T+1; only settled cash is buying power.
-- **Bilingual-ready** (English + Urdu) i18n scaffold with RTL handling.
-
----
-
-## Project structure
-
-```
-psx/
-├─ apps/
-│  ├─ backend/        # Node + TypeScript (Express) REST API + AI assistant
-│  └─ web/            # Vite + React + TypeScript phone-styled app
-├─ packages/
-│  ├─ shared/         # types, fee/tax config, i18n, theme, seed data, portfolio math
-│  └─ integrations/   # provider interfaces + MOCK adapters + DataService
-├─ docs/              # architecture.md, assumptions.md
-├─ .env.example
-└─ package.json       # npm workspaces
+```sh
+npm install zod
 ```
 
----
+<br/>
 
-## Note on the stack (a flagged deviation)
+## Basic usage
 
-The brief suggested **React Native + Expo**. With the user's go-ahead we built the
-front-end as a **Vite + React + TypeScript phone-styled web app** instead, because it opens
-instantly in any browser, makes the green/black/white look, 3D navigation and night mode
-fast to deliver, and needs near-zero setup to demo. **Everything the brief cares about
-architecturally is unchanged:** the Node/TS backend, the mocked integration layer behind
-interfaces, shared config-driven fees, the AI assistant with RAG + tools + guardrails, and
-the seed data. See [`docs/architecture.md`](docs/architecture.md) for the swap path to a
-native app.
+Before you can do anything else, you need to define a schema. For the purposes of this guide, we'll use a simple object schema.
 
----
+```ts
+import * as z from "zod";
 
-## Learn more
+const Player = z.object({
+  username: z.string(),
+  xp: z.number(),
+});
+```
 
-- [`docs/architecture.md`](docs/architecture.md) — how it fits together and the **mock → real** swap path.
-- [`docs/assumptions.md`](docs/assumptions.md) — assumptions, simplifications, **TODO-for-production**, and **what requires licensing/credentials** before going live.
+### Parsing data
+
+Given any Zod schema, use `.parse` to validate an input. If it's valid, Zod returns a strongly-typed _deep clone_ of the input.
+
+```ts
+Player.parse({ username: "billie", xp: 100 });
+// => returns { username: "billie", xp: 100 }
+```
+
+**Note** — If your schema uses certain asynchronous APIs like `async` [refinements](https://zod.dev/api#refinements) or [transforms](https://zod.dev/api#transforms), you'll need to use the `.parseAsync()` method instead.
+
+```ts
+const schema = z.string().refine(async (val) => val.length <= 8);
+
+await schema.parseAsync("hello");
+// => "hello"
+```
+
+### Handling errors
+
+When validation fails, the `.parse()` method will throw a `ZodError` instance with granular information about the validation issues.
+
+```ts
+try {
+  Player.parse({ username: 42, xp: "100" });
+} catch (err) {
+  if (err instanceof z.ZodError) {
+    err.issues;
+    /* [
+      {
+        expected: 'string',
+        code: 'invalid_type',
+        path: [ 'username' ],
+        message: 'Invalid input: expected string'
+      },
+      {
+        expected: 'number',
+        code: 'invalid_type',
+        path: [ 'xp' ],
+        message: 'Invalid input: expected number'
+      }
+    ] */
+  }
+}
+```
+
+To avoid a `try/catch` block, you can use the `.safeParse()` method to get back a plain result object containing either the successfully parsed data or a `ZodError`. The result type is a [discriminated union](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions), so you can handle both cases conveniently.
+
+```ts
+const result = Player.safeParse({ username: 42, xp: "100" });
+if (!result.success) {
+  result.error; // ZodError instance
+} else {
+  result.data; // { username: string; xp: number }
+}
+```
+
+**Note** — If your schema uses certain asynchronous APIs like `async` [refinements](https://zod.dev/api#refinements) or [transforms](https://zod.dev/api#transforms), you'll need to use the `.safeParseAsync()` method instead.
+
+```ts
+const schema = z.string().refine(async (val) => val.length <= 8);
+
+await schema.safeParseAsync("hello");
+// => { success: true; data: "hello" }
+```
+
+### Inferring types
+
+Zod infers a static type from your schema definitions. You can extract this type with the `z.infer<>` utility and use it however you like.
+
+```ts
+const Player = z.object({
+  username: z.string(),
+  xp: z.number(),
+});
+
+// extract the inferred type
+type Player = z.infer<typeof Player>;
+
+// use it in your code
+const player: Player = { username: "billie", xp: 100 };
+```
+
+In some cases, the input & output types of a schema can diverge. For instance, the `.transform()` API can convert the input from one type to another. In these cases, you can extract the input and output types independently:
+
+```ts
+const mySchema = z.string().transform((val) => val.length);
+
+type MySchemaIn = z.input<typeof mySchema>;
+// => string
+
+type MySchemaOut = z.output<typeof mySchema>; // equivalent to z.infer<typeof mySchema>
+// number
+```

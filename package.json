@@ -1,26 +1,14 @@
 {
-  "name": "psx-trading-prototype",
+  "name": "@psx/shared",
   "version": "0.1.0",
   "private": true,
-  "description": "PSX (Pakistan Stock Exchange) retail trading app prototype + in-app AI assistant. PROTOTYPE ONLY — every exchange/broker/depository/bank integration is MOCKED. Not a real trading system.",
-  "license": "UNLICENSED",
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
-    "dev": "concurrently -n backend,web -c green,cyan \"npm:dev:backend\" \"npm:dev:web\"",
-    "dev:backend": "npm run dev --workspace @psx/backend",
-    "dev:web": "npm run dev --workspace @psx/web",
-    "build": "npm run build --workspace @psx/web",
-    "preview": "npm run preview --workspace @psx/web",
-    "start:backend": "npm run start --workspace @psx/backend",
-    "typecheck": "npm run typecheck --workspace @psx/web && npm run typecheck --workspace @psx/backend"
-  },
-  "devDependencies": {
-    "concurrently": "^9.1.2"
-  },
-  "engines": {
-    "node": ">=20"
+    "typecheck": "tsc --noEmit"
   }
 }
